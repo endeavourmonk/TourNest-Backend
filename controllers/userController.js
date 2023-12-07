@@ -35,3 +35,10 @@ exports.getUser = async (req, res, next) => {
 };
 exports.updateUser = async (req, res, next) => {};
 exports.deleteUser = async (req, res, next) => {};
+
+exports.forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+  if (!email) return next(new AppError(400, 'Please Enter Email'));
+  const user = await User.find({ email });
+  console.log(user);
+};
