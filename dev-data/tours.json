@@ -1,0 +1,281 @@
+[
+  {
+    "name": "Amazing Adventure Tour",
+    "duration": 7,
+    "maxGroupSize": 12,
+    "difficulty": "Moderate",
+    "price": 1299,
+    "discount": 0,
+    "ratings": 4.8,
+    "totalRatings": 35,
+    "description": "This tour takes you on a thrilling adventure to explore stunning landscapes and immerse in local cultures.",
+    "summary": "Experience an amazing adventure in breathtaking locations.",
+    "imageCover": "amazing-adventure.jpg",
+    "images": ["image1.jpg", "image2.jpg", "image3.jpg"],
+    "startDates": ["2023-05-15", "2023-06-01", "2023-07-10"]
+  },
+  {
+    "name": "Jungle Safari Expedition",
+    "duration": 10,
+    "maxGroupSize": 15,
+    "difficulty": "Challenging",
+    "price": 1599,
+    "discount": 10,
+    "ratings": 4.5,
+    "totalRatings": 42,
+    "description": "Embark on a thrilling jungle safari and witness exotic wildlife up close.",
+    "summary": "Explore the heart of the jungle with expert guides.",
+    "imageCover": "jungle-safari.jpg",
+    "images": ["image4.jpg", "image5.jpg", "image6.jpg"],
+    "startDates": ["2023-06-20", "2023-07-05", "2023-08-15"]
+  },
+  {
+    "name": "Mountain Trekking Adventure",
+    "duration": 8,
+    "maxGroupSize": 10,
+    "difficulty": "Difficult",
+    "price": 1899,
+    "discount": 15,
+    "ratings": 4.9,
+    "totalRatings": 28,
+    "description": "Conquer the highest peaks and experience the thrill of mountaineering.",
+    "summary": "A challenging trek for adventure enthusiasts.",
+    "imageCover": "mountain-trek.jpg",
+    "images": ["image7.jpg", "image8.jpg", "image9.jpg"],
+    "startDates": ["2023-07-01", "2023-08-10", "2023-09-05"]
+  },
+  {
+    "name": "Mountain Adventure Tour",
+    "duration": 10,
+    "maxGroupSize": 10,
+    "difficulty": "Easy",
+    "price": 100,
+    "discount": 0,
+    "ratings": 3,
+    "totalRatings": 0,
+    "description": "This is a mountain adventure tour.",
+    "summary": "This tour is perfect for beginners and experienced hikers alike.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2023-09-27", "2023-10-01"]
+  },
+  {
+    "name": "Jungle Adventure Tour",
+    "duration": 12,
+    "maxGroupSize": 15,
+    "difficulty": "Moderate",
+    "price": 1500,
+    "discount": 0,
+    "ratings": 4.5,
+    "totalRatings": 20,
+    "description": "This is a jungle adventure tour.",
+    "summary": "Explore the lush rainforests and encounter exotic wildlife.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2023-10-15", "2023-11-01", "2023-12-10"]
+  },
+  {
+    "name": "Desert Adventure Tour",
+    "duration": 8,
+    "maxGroupSize": 12,
+    "difficulty": "Moderate",
+    "price": 1200,
+    "discount": 0,
+    "ratings": 4.7,
+    "totalRatings": 15,
+    "description": "This is a desert adventure tour.",
+    "summary": "Experience the vastness and beauty of the desert.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2023-11-15", "2023-12-01", "2024-01-10"]
+  },
+  {
+    "name": "Wildlife Adventure Tour",
+    "duration": 9,
+    "maxGroupSize": 10,
+    "difficulty": "Easy",
+    "price": 1300,
+    "discount": 0,
+    "ratings": 4.9,
+    "totalRatings": 10,
+    "description": "This is a wildlife adventure tour.",
+    "summary": "Get up close to amazing wildlife in their natural habitats.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2024-01-15", "2024-02-01", "2024-03-10"]
+  },
+  {
+    "name": "Island Adventure Tour",
+    "duration": 11,
+    "maxGroupSize": 12,
+    "difficulty": "Moderate",
+    "price": 1400,
+    "discount": 0,
+    "ratings": 4.7,
+    "totalRatings": 25,
+    "description": "This is an island adventure tour.",
+    "summary": "Explore beautiful islands, swim in crystal-clear waters, and relax on sandy beaches.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2024-03-15", "2024-04-01", "2024-05-10"]
+  },
+  {
+    "name": "City Adventure Tour",
+    "duration": 7,
+    "maxGroupSize": 15,
+    "difficulty": "Easy",
+    "price": 1100,
+    "discount": 0,
+    "ratings": 4.6,
+    "totalRatings": 35,
+    "description": "This is a city adventure tour.",
+    "summary": "Explore vibrant cities, visit iconic landmarks, and experience local cultures.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2024-05-15", "2024-06-01", "2024-07-10"]
+  },
+  {
+    "name": "Historical Adventure Tour",
+    "duration": 10,
+    "maxGroupSize": 12,
+    "difficulty": "Easy",
+    "price": 1300,
+    "discount": 0,
+    "ratings": 4.8,
+    "totalRatings": 20,
+    "description": "This is a historical adventure tour.",
+    "summary": "Visit ancient ruins, learn about fascinating cultures, and discover hidden treasures.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2024-07-15", "2024-08-01", "2024-09-10"]
+  },
+  {
+    "name": "Culinary Adventure Tour",
+    "duration": 12,
+    "maxGroupSize": 15,
+    "difficulty": "Easy",
+    "price": 1500,
+    "discount": 0,
+    "ratings": 4.9,
+    "totalRatings": 15,
+    "description": "This is a culinary adventure tour.",
+    "summary": "Sample delicious cuisines from around the world, learn about culinary cultures, and meet renowned chefs.",
+    "imageCover": "https://example.com/image-cover.jpg",
+    "images": [
+      "https://example.com/image-1.jpg",
+      "https://example.com/image-2.jpg"
+    ],
+    "startDates": ["2024-09-15", "2024-10-01", "2024-11-10"]
+  },
+  {
+    "name": "Mountain Exploration Expedition",
+    "duration": 10,
+    "maxGroupSize": 10,
+    "difficulty": "Easy",
+    "price": 100,
+    "discount": 0,
+    "ratings": 3,
+    "totalRatings": 0,
+    "description": "Explore the scenic beauty of mountain landscapes on this adventure tour.",
+    "summary": "Ideal for beginners and experienced hikers.",
+    "imageCover": "https://example.com/mountain-adventure.jpg",
+    "images": [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg"
+    ],
+    "startDates": ["2023-09-27", "2023-10-01"]
+  },
+  {
+    "name": "Rainforest Discovery Tour",
+    "duration": 12,
+    "maxGroupSize": 15,
+    "difficulty": "Moderate",
+    "price": 1500,
+    "discount": 0,
+    "ratings": 4.5,
+    "totalRatings": 20,
+    "description": "Embark on an exciting jungle adventure and discover the wonders of the rainforest.",
+    "summary": "Encounter exotic wildlife in their natural habitat.",
+    "imageCover": "https://example.com/jungle-adventure.jpg",
+    "images": [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg"
+    ],
+    "startDates": ["2023-10-15", "2023-11-01", "2023-12-10"]
+  },
+  {
+    "name": "Dunes and Oasis Expedition",
+    "duration": 8,
+    "maxGroupSize": 12,
+    "difficulty": "Moderate",
+    "price": 1200,
+    "discount": 0,
+    "ratings": 4.7,
+    "totalRatings": 15,
+    "description": "Experience the breathtaking beauty of the desert landscape on this adventure tour.",
+    "summary": "An unforgettable journey into the heart of the desert.",
+    "imageCover": "https://example.com/desert-adventure.jpg",
+    "images": [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg"
+    ],
+    "startDates": ["2023-11-15", "2023-12-01", "2024-01-10"]
+  },
+  {
+    "name": "Safari Adventure Experience",
+    "duration": 9,
+    "maxGroupSize": 10,
+    "difficulty": "Easy",
+    "price": 1300,
+    "discount": 0,
+    "ratings": 4.9,
+    "totalRatings": 10,
+    "description": "Embark on a wildlife adventure and witness incredible animals in their natural habitats.",
+    "summary": "A perfect tour for animal enthusiasts.",
+    "imageCover": "https://example.com/wildlife-adventure.jpg",
+    "images": [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg"
+    ],
+    "startDates": ["2024-01-15", "2024-02-01", "2024-03-10"]
+  },
+  {
+    "name": "Seaside Exploration Journey",
+    "duration": 7,
+    "maxGroupSize": 8,
+    "difficulty": "Easy",
+    "price": 1100,
+    "discount": 0,
+    "ratings": 4.6,
+    "totalRatings": 18,
+    "description": "Discover the beauty of coastal landscapes on this thrilling adventure tour.",
+    "summary": "Explore picturesque coastal areas and enjoy beachfront activities.",
+    "imageCover": "https://example.com/coastal-adventure.jpg",
+    "images": [
+      "https://example.com/image1.jpg",
+      "https://example.com/image2.jpg"
+    ],
+    "startDates": ["2023-10-20", "2023-11-05", "2023-12-20"]
+  }
+]
