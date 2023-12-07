@@ -16,6 +16,7 @@ router.post('/login', login);
 
 router.route('/').get(protect, getAllUsers);
 router.route('/forgotpassword').post(forgotPassword);
+// router.route('/resetpassword').post(resetPassword);
 // router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
 module.exports = router;
