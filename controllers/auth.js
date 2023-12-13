@@ -11,12 +11,15 @@ const signToken = (id) =>
 
 exports.signUp = async (req, res, next) => {
   try {
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
-    });
+    // Don't put extra fields other than mentioned in the schema for security reasons
+    // const newUser = await User.create({
+    //   name: req.body.name,
+    //   email: req.body.email,
+    //   password: req.body.password,
+    //   passwordConfirm: req.body.passwordConfirm,
+    // });
+
+    const newUser = await User.create(req.body);
 
     const token = signToken(newUser._id);
 
@@ -157,11 +160,14 @@ exports.resetPassword = async (req, res, next) => {
       );
 
     // Get the user based on the token
-    const { token } = req.params;
-    const hashedtoken = crypto.createHash('sha256').update(token).digest('hex');
+    const { resetToken } = req.params;
+    const hashedResetToken = crypto
+      .createHash('sha256')
+      .update(resetToken)
+      .digest('hex');
 
     // If user exists and token is not expired, change the passowrd
-    const user = await User.findOne({ passwordResetToken: hashedtoken });
+    const user = await User.findOne({ passwordResetToken: hashedResetToken });
     if (!user) return next(new AppError(400, 'Invalid password reset token'));
 
     if (user.passwordResetTokenExpires < Date.now())
@@ -181,11 +187,55 @@ exports.resetPassword = async (req, res, next) => {
     await user.save();
 
     // Login user, send JWT
-    const jwtToken = signToken(user._id);
+    const token = signToken(user._id);
 
     res.status(200).json({
       status: 'success',
-      token: jwtToken,
+      token: token,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updatePassword = async (req, res, next) => {
+  const { password, newPassword, passwordConfirm } = req.body;
+  const { id } = req.user;
+
+  if (!password && !newPassword && !passwordConfirm)
+    return next(
+      new AppError(
+        400,
+        'Please enter current pasword, new password and confirm new passowrd',
+      ),
+    );
+  try {
+    // Get the user
+    const user = await User.findOne({ _id: id });
+    if (!user) return next(new AppError(404, 'user does not exist'));
+
+    // Check if entered password is correct
+    const isPasswordCorrect = await user.comparePassword(
+      password,
+      user.password,
+    );
+
+    if (!isPasswordCorrect)
+      return next(
+        new AppError(400, 'Wrong Current password, Please try again'),
+      );
+
+    // Update the password
+    user.password = newPassword;
+    user.passwordConfirm = passwordConfirm;
+    await user.save();
+
+    // Login user
+    const token = signToken(user._id);
+
+    res.status(200).json({
+      status: 'success',
+      token: token,
     });
   } catch (error) {
     next(error);
