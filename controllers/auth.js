@@ -9,6 +9,27 @@ const signToken = (id) =>
     expiresIn: process.env.JWT_EXPIRES_IN,
   });
 
+const createAndSendToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+
+  const cookieOptions = {
+    httpOnly: true,
+    expiresIn: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000,
+    ),
+  };
+
+  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  res.status(statusCode).json({
+    status: '✅ success',
+    token: token,
+    user: user,
+  });
+};
+
 exports.signUp = async (req, res, next) => {
   try {
     // Don't put extra fields other than mentioned in the schema for security reasons
@@ -20,15 +41,7 @@ exports.signUp = async (req, res, next) => {
     // });
 
     const newUser = await User.create(req.body);
-
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
-      status: '✅ success',
-      message: 'Signed Up successfully',
-      token: token,
-      user: newUser,
-    });
+    createAndSendToken(newUser, 201, res);
   } catch (error) {
     next(error);
   }
@@ -55,13 +68,7 @@ exports.login = async (req, res, next) => {
 
     // return response based on the entered password is correct or not
     if (isPasswordCorrect) {
-      const token = signToken(user._id);
-
-      res.status(201).json({
-        status: '✅ success',
-        message: 'LoggedIn successfully',
-        token: token,
-      });
+      createAndSendToken(user, 201, res);
     } else {
       return next(new AppError(400, `Wrong Password`));
     }
@@ -187,12 +194,7 @@ exports.resetPassword = async (req, res, next) => {
     await user.save();
 
     // Login user, send JWT
-    const token = signToken(user._id);
-
-    res.status(200).json({
-      status: 'success',
-      token: token,
-    });
+    createAndSendToken(user, 200, res);
   } catch (error) {
     next(error);
   }
@@ -231,12 +233,7 @@ exports.updatePassword = async (req, res, next) => {
     await user.save();
 
     // Login user
-    const token = signToken(user._id);
-
-    res.status(200).json({
-      status: 'success',
-      token: token,
-    });
+    createAndSendToken(user, 200, res);
   } catch (error) {
     next(error);
   }
