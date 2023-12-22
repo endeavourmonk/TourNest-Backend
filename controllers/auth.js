@@ -32,15 +32,15 @@ const createAndSendToken = (user, statusCode, res) => {
 
 exports.signUp = async (req, res, next) => {
   try {
-    // Don't put extra fields other than mentioned in the schema for security reasons
-    // const newUser = await User.create({
-    //   name: req.body.name,
-    //   email: req.body.email,
-    //   password: req.body.password,
-    //   passwordConfirm: req.body.passwordConfirm,
-    // });
+    // Don't put extra fields for security reasons
+    const newUser = await User.create({
+      name: req.body.name,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+    });
 
-    const newUser = await User.create(req.body);
+    // const newUser = await User.create(req.body);
     createAndSendToken(newUser, 201, res);
   } catch (error) {
     next(error);
