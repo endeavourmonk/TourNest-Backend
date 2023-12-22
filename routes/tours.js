@@ -15,10 +15,10 @@ const router = express.Router();
 
 router
   .route('/')
-  .get(protect, getAllTours)
+  .get(getAllTours)
   .post(protect, restrictToRole('admin'), createTour);
 
-router.route('/mostPopular').get(mostPopularBuilder, getAllTours);
+router.route('/most-popular').get(mostPopularBuilder, getAllTours);
 router.route('/tour-stats').get(protect, restrictToRole('admin'), getTourStats);
 
 router
