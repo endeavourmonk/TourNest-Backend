@@ -76,3 +76,19 @@ exports.updateMe = async (req, res, next) => {
     next(error);
   }
 };
+
+// Not delete the user from db, mark user inactive
+exports.deleteMe = async (req, res, next) => {
+  try {
+    const { id } = req.user;
+    await User.findByIdAndUpdate(id, { active: false });
+
+    res.status(204).json({
+      status: '✅ success',
+      message: 'Deleted User',
+      data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
