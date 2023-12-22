@@ -2,6 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+
 const tourRouter = require('./routes/tours');
 const userRouter = require('./routes/users');
 const AppError = require('./utils/appError');
@@ -11,19 +13,31 @@ const app = express();
 
 // middlewares
 
+// securing req headers
+app.use(helmet());
+
+// Apply the rate limiting middleware to all requests.
 const limiter = rateLimit({
   windowMs: process.env.RATE_LIMIT_WINDOW * 60 * 1000,
   limit: process.env.RATE_LIMIT,
   message: 'Rate limit exceeded. Please try again later.',
 });
 
-// Apply the rate limiting middleware to all requests.
 app.use(limiter);
 
-app.use(helmet());
-
 // Parse incoming requests with JSON payloads.
-app.use(express.json());
+app.use(express.json({ limit: '10kb' }));
+
+// Data sanitization NOSQL Queries
+app.use(
+  mongoSanitize({
+    onSanitize: ({ req, key }) => {
+      console.warn(`This request[${key}] is sanitized`);
+    },
+  }),
+);
+
+// Data sanitization XSS
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
