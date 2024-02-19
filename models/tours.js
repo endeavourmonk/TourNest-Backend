@@ -1,6 +1,21 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
+const locationSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    default: 'Point',
+    enum: ['Point'],
+  },
+  coordinates: [Number],
+  address: String,
+  city: String,
+  state: String,
+  country: String,
+  description: String,
+  day: Number,
+});
+
 const opts = { toJSON: { virtuals: true }, toObject: { virtuals: true } };
 const tourSchema = new mongoose.Schema(
   {
@@ -76,6 +91,8 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: locationSchema,
+    locations: [locationSchema],
   },
   opts,
 );
