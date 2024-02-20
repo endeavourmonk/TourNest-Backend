@@ -36,11 +36,11 @@ exports.signUp = async (req, res, next) => {
     const newUser = await User.create({
       name: req.body.name,
       email: req.body.email,
+      username: req.body.username,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
     });
 
-    // const newUser = await User.create(req.body);
     createAndSendToken(newUser, 201, res);
   } catch (error) {
     next(error);

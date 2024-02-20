@@ -24,6 +24,7 @@ exports.getAllUsers = async (req, res, next) => {
     next(error);
   }
 };
+
 exports.getUser = async (req, res, next) => {
   try {
     const id = { req };
@@ -57,7 +58,7 @@ exports.updateMe = async (req, res, next) => {
       );
 
     // Update the user data
-    const fieldsToKeep = ['name', 'email', 'photo'];
+    const fieldsToKeep = ['name', 'email', 'photo', 'username'];
     const filteredBody = filterObj(req.body, fieldsToKeep);
 
     const { id } = req.user;
@@ -87,6 +88,25 @@ exports.deleteMe = async (req, res, next) => {
       status: '✅ success',
       message: 'Deleted User',
       data: null,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.changeRole = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const update = { role: req.body.role };
+    const updatedUser = await User.findByIdAndUpdate(id, update, {
+      new: true,
+      runValidators: true,
+    });
+    res.status(200).json({
+      status: 'success',
+      data: {
+        user: updatedUser,
+      },
     });
   } catch (error) {
     next(error);

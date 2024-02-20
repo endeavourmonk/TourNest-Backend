@@ -28,7 +28,7 @@ router
 router
   .route('/:id')
   .get(protect, getTour)
-  .put(protect, restrictToRole('admin'), updateTour)
+  .patch(protect, restrictToRole('admin'), updateTour)
   .delete(protect, restrictToRole('admin'), deleteTour);
 
 // router.route('/:slug').get(getTour);

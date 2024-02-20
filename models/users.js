@@ -10,6 +10,14 @@ const userSchema = new mongoose.Schema({
     trim: true,
     maxLength: [50, 'Name of User cannot exceeds 50 characters'],
   },
+  username: {
+    type: String,
+    unique: true,
+    default: function () {
+      // Use the first part of the email as the default username
+      return this.email ? this.email.split('@')[0] : undefined;
+    },
+  },
   email: {
     type: String,
     required: [true, 'User Account cannot be without an email'],
