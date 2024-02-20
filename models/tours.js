@@ -93,6 +93,7 @@ const tourSchema = new mongoose.Schema(
     },
     startLocation: locationSchema,
     locations: [locationSchema],
+    guides: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   opts,
 );
@@ -103,14 +104,24 @@ tourSchema.virtual('durationWeeks').get(function () {
 });
 
 // document middleware to create the slug on tour creation
-tourSchema.pre('save', function (next) {
+tourSchema.pre('save', async function (next) {
   this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+// query middleware to populate the guides array by the guides from User Collection
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-password -passwordLastChanged -__v -active',
+  });
   next();
 });
 
 // query middleware to update the slug on the tour update
 tourSchema.pre('findOneAndUpdate', function (next) {
   try {
+    // Returns the current update operations as a JSON object.
     const update = this.getUpdate();
     const slug = slugify(update.name, { lower: true });
     this.updateOne({}, { slug: slug });
