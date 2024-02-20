@@ -6,6 +6,7 @@ const mongoSanitize = require('express-mongo-sanitize');
 
 const tourRouter = require('./routes/tours');
 const userRouter = require('./routes/users');
+const reviewRouter = require('./routes/reviews');
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/error');
 
@@ -51,6 +52,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(404, `${req.originalUrl} not found`));
