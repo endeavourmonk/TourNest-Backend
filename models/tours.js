@@ -124,7 +124,7 @@ tourSchema.pre('findOneAndUpdate', function (next) {
     // Returns the current update operations as a JSON object.
     const update = this.getUpdate();
     const slug = slugify(update.name, { lower: true });
-    this.updateOne({}, { slug: slug });
+    update.slug = slug;
     next();
   } catch (error) {
     next(error);
