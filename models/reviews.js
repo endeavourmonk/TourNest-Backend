@@ -14,8 +14,9 @@ const reviewSchema = new mongoose.Schema({
       message: 'A review cannot contain bad words or HTML tags.',
     },
   },
-  ratings: {
+  rating: {
     type: Number,
+    required: [true, 'A review cannot be without rating.'],
     min: [1, 'Rating cannot be less than 1'],
     max: [5, 'Rating cannot be more than 5'],
   },
@@ -37,6 +38,28 @@ const reviewSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  updatedAt: {
+    type: Date,
+    default: Date.now(),
+  },
+});
+
+// Query middleware to add the data in tour and user field on find operation
+reviewSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: 'user',
+    select: 'name username photo -_id',
+  });
+  next();
+});
+
+// query middleware to change the isEdited field to true if review is updated
+reviewSchema.pre('findOneAndUpdate', function (next) {
+  // Returns the current update operations as a JSON object.
+  const update = this.getUpdate();
+  update.isEdited = true;
+  update.updatedAt = Date.now();
+  next();
 });
 
 const Review = mongoose.model('Review', reviewSchema);
