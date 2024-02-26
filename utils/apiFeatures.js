@@ -54,8 +54,9 @@ module.exports = class APIFeatures {
   }
 
   paginate() {
-    const { page = 1, limit = 10 } = this.queryStr;
-    const skipData = (page - 1) * limit;
+    const { page = 1, limit = 50 } = this.queryStr;
+    const pageNo = Math.max(1, page);
+    const skipData = (pageNo - 1) * limit;
     this.query = this.query.skip(skipData).limit(limit);
     return this;
   }
