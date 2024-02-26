@@ -17,7 +17,7 @@ const {
   updateMe,
   deleteMe,
   changeRole,
-} = require('../controllers/userController');
+} = require('../controllers/users');
 
 const router = express.Router();
 

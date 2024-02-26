@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
-app.use('api/v1/reviews', reviewRouter);
+app.use('/api/v1/reviews', reviewRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(404, `${req.originalUrl} not found`));

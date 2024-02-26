@@ -57,7 +57,7 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       default: 3,
       min: [1, 'Rating cannot be less than 1'],
-      max: [10, 'Rating cannot be more than 10'],
+      max: [5, 'Rating cannot be more than 5'],
     },
     totalRatings: {
       type: Number,
@@ -103,6 +103,13 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  localField: '_id',
+  foreignField: 'tour',
+  // justOne: true,
+});
+
 // document middleware to create the slug on tour creation
 tourSchema.pre('save', async function (next) {
   this.slug = slugify(this.name, { lower: true });
@@ -115,6 +122,7 @@ tourSchema.pre(/^find/, function (next) {
     path: 'guides',
     select: '-password -passwordLastChanged -__v -active',
   });
+
   next();
 });
 
@@ -131,7 +139,7 @@ tourSchema.pre('findOneAndUpdate', function (next) {
   }
 });
 
-// aggregate middleware to filter the premium tour
+// aggregate middleware to filter the non-premium tour by adding a match stage
 tourSchema.pre('aggregate', function (next) {
   this._pipeline.unshift({ $match: { premium: false } });
   next();

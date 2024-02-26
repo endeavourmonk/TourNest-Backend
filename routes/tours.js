@@ -9,9 +9,14 @@ const {
   mostPopularBuilder,
   getTourStats,
   getMonthlyPlan,
-} = require('../controllers/tourController');
+} = require('../controllers/tours');
+
+const reveiwRouter = require('./reviews');
 
 const router = express.Router();
+
+// nested route "http://localhost:8000/api/v1/tours/222121/reviews"
+router.use('/:tourId/reviews', reveiwRouter);
 
 router
   .route('/')
