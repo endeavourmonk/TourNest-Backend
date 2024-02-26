@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const User = require('../models/users');
 const AppError = require('../utils/appError');
 const sendEmail = require('../utils/email');
+const handleAsync = require('../utils/handleAsync');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -24,88 +25,73 @@ const createAndSendToken = (user, statusCode, res) => {
   res.cookie('jwt', token, cookieOptions);
 
   res.status(statusCode).json({
-    status: '✅ success',
+    status: 'success',
     token: token,
     user: user,
   });
 };
 
-exports.signUp = async (req, res, next) => {
-  try {
-    // Don't put extra fields for security reasons
-    const newUser = await User.create({
-      name: req.body.name,
-      email: req.body.email,
-      username: req.body.username,
-      password: req.body.password,
-      passwordConfirm: req.body.passwordConfirm,
-    });
+exports.signUp = handleAsync(async (req, res, next) => {
+  // Don't put extra fields for security reasons
+  const newUser = await User.create({
+    name: req.body.name,
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+  });
 
-    createAndSendToken(newUser, 201, res);
-  } catch (error) {
-    next(error);
+  createAndSendToken(newUser, 201, res);
+});
+
+exports.login = handleAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new AppError(400, 'Enter email and password'));
   }
-};
 
-exports.login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    // if empty email or password
-    if (!email || !password) {
-      return next(new AppError(400, 'Enter email and password'));
-    }
-
-    const user = await User.findOne({ email });
-    // if no user exist with this email
-    if (!user) {
-      return next(new AppError(404, `User doesn't exist`));
-    }
-
-    const isPasswordCorrect = await user.comparePassword(
-      password,
-      user.password,
-    );
-
-    // return response based on the entered password is correct or not
-    if (isPasswordCorrect) {
-      createAndSendToken(user, 201, res);
-    } else {
-      return next(new AppError(400, `Wrong Password`));
-    }
-  } catch (error) {
-    next(error);
+  const user = await User.findOne({ email });
+  // if no user exist with this email
+  if (!user) {
+    return next(new AppError(404, `User doesn't exist`));
   }
-};
 
-exports.protect = async (req, res, next) => {
-  try {
-    let token = req.headers.authorization;
+  const isPasswordCorrect = await user.comparePassword(password, user.password);
 
-    // Empty token: user not logged In
-    if (!token) {
-      return next(new AppError(401, 'Login to access this route'));
-    }
-
-    // Verify token
-    token = token.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Check if user still exists
-    const { id } = decoded;
-    const user = await User.findById(id);
-    if (!user) return next(new AppError(404, `User doesn't exist`));
-
-    // Check if password changed after issuing token
-    const isPasswordChanged = user.hasPasswordChangedSinceToken(decoded.iat);
-    if (isPasswordChanged)
-      return next(new AppError(401, 'Password changed, Please login again!'));
-
-    req.user = user;
-    next();
-  } catch (error) {
-    next(error);
+  // return response based on the entered password is correct or not
+  if (isPasswordCorrect) {
+    createAndSendToken(user, 201, res);
+  } else {
+    return next(new AppError(400, `Wrong Password`));
   }
-};
+});
+
+exports.protect = handleAsync(async (req, res, next) => {
+  let token = req.headers.authorization;
+
+  // Empty token: user not logged In
+  if (!token) {
+    return next(new AppError(401, 'Login to access this route'));
+  }
+
+  // Verify token
+  token = token.split(' ')[1];
+  const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+  // Check if user still exists
+  const { id } = decoded;
+  const user = await User.findById(id);
+  if (!user) return next(new AppError(404, `User doesn't exist`));
+
+  // Check if password changed after issuing token
+  const isPasswordChanged = user.hasPasswordChangedSinceToken(decoded.iat);
+  if (isPasswordChanged)
+    return next(new AppError(401, 'Password changed, Please login again!'));
+
+  req.user = user;
+  next();
+});
 
 exports.restrictToRole =
   (...roles) =>
@@ -158,49 +144,45 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-exports.resetPassword = async (req, res, next) => {
-  try {
-    const { password, passwordConfirm } = req.body;
-    if (!password || !passwordConfirm)
-      return next(
-        new AppError(400, 'Please Enter password and Password Confirm'),
-      );
+exports.resetPassword = handleAsync(async (req, res, next) => {
+  const { password, passwordConfirm } = req.body;
+  if (!password || !passwordConfirm)
+    return next(
+      new AppError(400, 'Please Enter password and Password Confirm'),
+    );
 
-    // Get the user based on the token
-    const { resetToken } = req.params;
-    const hashedResetToken = crypto
-      .createHash('sha256')
-      .update(resetToken)
-      .digest('hex');
+  // Get the user based on the token
+  const { resetToken } = req.params;
+  const hashedResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
 
-    // If user exists and token is not expired, change the passowrd
-    const user = await User.findOne({ passwordResetToken: hashedResetToken });
-    if (!user) return next(new AppError(400, 'Invalid password reset token'));
+  // If user exists and token is not expired, change the passowrd
+  const user = await User.findOne({ passwordResetToken: hashedResetToken });
+  if (!user) return next(new AppError(400, 'Invalid password reset token'));
 
-    if (user.passwordResetTokenExpires < Date.now())
-      return next(
-        new AppError(400, 'Password reset timed out, Please try again'),
-      );
+  if (user.passwordResetTokenExpires < Date.now())
+    return next(
+      new AppError(400, 'Password reset timed out, Please try again'),
+    );
 
-    /*  Update the passwordLastChanged and password property and 
+  /*  Update the passwordLastChanged and password property and 
         set tokens field to undefined so that user cannot update
         password again with the same token.
     */
-    user.password = password;
-    user.passwordConfirm = passwordConfirm;
-    user.passwordResetToken = undefined;
-    user.passwordResetTokenExpires = undefined;
+  user.password = password;
+  user.passwordConfirm = passwordConfirm;
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExpires = undefined;
 
-    await user.save();
+  await user.save();
 
-    // Login user, send JWT
-    createAndSendToken(user, 200, res);
-  } catch (error) {
-    next(error);
-  }
-};
+  // Login user, send JWT
+  createAndSendToken(user, 200, res);
+});
 
-exports.updatePassword = async (req, res, next) => {
+exports.updatePassword = handleAsync(async (req, res, next) => {
   const { password, newPassword, passwordConfirm } = req.body;
   const { id } = req.user;
 
@@ -211,30 +193,22 @@ exports.updatePassword = async (req, res, next) => {
         'Please enter current pasword, new password and confirm new passowrd',
       ),
     );
-  try {
-    // Get the user
-    const user = await User.findOne({ _id: id });
-    if (!user) return next(new AppError(404, 'user does not exist'));
 
-    // Check if entered password is correct
-    const isPasswordCorrect = await user.comparePassword(
-      password,
-      user.password,
-    );
+  // Get the user
+  const user = await User.findOne({ _id: id });
+  if (!user) return next(new AppError(404, 'user does not exist'));
 
-    if (!isPasswordCorrect)
-      return next(
-        new AppError(400, 'Wrong Current password, Please try again'),
-      );
+  // Check if entered password is correct
+  const isPasswordCorrect = await user.comparePassword(password, user.password);
 
-    // Update the password
-    user.password = newPassword;
-    user.passwordConfirm = passwordConfirm;
-    await user.save();
+  if (!isPasswordCorrect)
+    return next(new AppError(400, 'Wrong Current password, Please try again'));
 
-    // Login user
-    createAndSendToken(user, 200, res);
-  } catch (error) {
-    next(error);
-  }
-};
+  // Update the password
+  user.password = newPassword;
+  user.passwordConfirm = passwordConfirm;
+  await user.save();
+
+  // Login user
+  createAndSendToken(user, 200, res);
+});
