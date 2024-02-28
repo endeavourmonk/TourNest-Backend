@@ -1,7 +1,13 @@
 const Tour = require('../models/tours');
-const APIFeatures = require('../utils/apiFeatures');
-const AppError = require('../utils/appError');
 const handleAsync = require('../utils/handleAsync');
+
+const {
+  getAll,
+  getOne,
+  updateOne,
+  deleteOne,
+  createOne,
+} = require('./handleFactory');
 
 // Middleware
 exports.mostPopularBuilder = (req, res, next) => {
@@ -17,83 +23,89 @@ exports.mostPopularBuilder = (req, res, next) => {
 };
 
 // Route Handlers
-exports.getAllTours = handleAsync(async (req, res, next) => {
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
+// exports.getAllTours = handleAsync(async (req, res, next) => {
+//   const features = new APIFeatures(Tour.find(), req.query)
+//     .filter()
+//     .sort()
+//     .limitFields()
+//     .paginate();
 
-  // Execute Query
-  const allTours = await features.query;
+//   // Execute Query
+//   const allTours = await features.query;
 
-  res.status(200).json({
-    status: 'success',
-    results: allTours.length,
-    data: {
-      tours: allTours,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     results: allTours.length,
+//     data: {
+//       tours: allTours,
+//     },
+//   });
+// });
 
-exports.getTour = handleAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const tour = await Tour.findById(id).populate({
-    path: 'reviews',
-  });
-  if (!tour) {
-    return next(new AppError(404, `No tour found with ID: ${id}`));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tours: tour,
-    },
-  });
-});
+exports.getAllTours = getAll(Tour);
+exports.getTour = getOne(Tour);
+exports.createTour = createOne(Tour);
+exports.updateTour = updateOne(Tour);
+exports.deleteTour = deleteOne(Tour);
 
-exports.createTour = handleAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-  res.status(201).json({
-    status: 'success',
-    message: 'Tour created',
-    data: newTour,
-  });
-});
+// exports.getTour = handleAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   const tour = await Tour.findById(id).populate({
+//     path: 'reviews',
+//   });
+//   if (!tour) {
+//     return next(new AppError(404, `No tour found with ID: ${id}`));
+//   }
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       tours: tour,
+//     },
+//   });
+// });
 
-exports.updateTour = handleAsync(async (req, res, next) => {
-  const { id } = req.params;
+// exports.createTour = handleAsync(async (req, res, next) => {
+//   const newTour = await Tour.create(req.body);
+//   res.status(201).json({
+//     status: 'success',
+//     message: 'Tour created',
+//     data: newTour,
+//   });
+// });
 
-  const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+// exports.updateTour = handleAsync(async (req, res, next) => {
+//   const { id } = req.params;
 
-  if (!updatedTour) {
-    return next(new AppError(404, `No tour found with ID: ${id}`));
-  }
+//   const updatedTour = await Tour.findByIdAndUpdate(id, req.body, {
+//     new: true,
+//     runValidators: true,
+//   });
 
-  res.status(200).json({
-    status: 'success',
-    message: 'Tour Updated',
-    data: updatedTour,
-  });
-});
+//   if (!updatedTour) {
+//     return next(new AppError(404, `No tour found with ID: ${id}`));
+//   }
 
-exports.deleteTour = handleAsync(async (req, res, next) => {
-  const { id } = req.params;
-  const deletedTour = await Tour.findByIdAndDelete(id);
-  if (!deletedTour) {
-    return next(new AppError(404, `No tour found with ID: ${id}`));
-  }
-  res.status(204).json({
-    status: 'success',
-    message: 'Tour created',
-    data: {
-      deletedTour,
-    },
-  });
-});
+//   res.status(200).json({
+//     status: 'success',
+//     message: 'Tour Updated',
+//     data: updatedTour,
+//   });
+// });
+
+// exports.deleteTour = handleAsync(async (req, res, next) => {
+//   const { id } = req.params;
+//   const deletedTour = await Tour.findByIdAndDelete(id);
+//   if (!deletedTour) {
+//     return next(new AppError(404, `No tour found with ID: ${id}`));
+//   }
+//   res.status(204).json({
+//     status: 'success',
+//     message: 'Tour created',
+//     data: {
+//       deletedTour,
+//     },
+//   });
+// });
 
 exports.getTourStats = handleAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
