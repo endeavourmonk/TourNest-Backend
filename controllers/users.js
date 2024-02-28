@@ -2,6 +2,8 @@ const User = require('../models/users');
 const AppError = require('../utils/appError');
 const handleAsync = require('../utils/handleAsync');
 
+const { getAll, getOne, updateOne, deleteOne } = require('./handleFactory');
+
 const filterObj = (obj, allowedFields) => {
   const filteredObj = {};
   Object.keys(obj).forEach((key) => {
@@ -10,33 +12,17 @@ const filterObj = (obj, allowedFields) => {
   return filteredObj;
 };
 
-exports.getAllUsers = handleAsync(async (req, res, next) => {
-  const users = await User.find({});
+exports.getAllUsers = getAll(User);
+exports.getUser = getOne(User);
+exports.updateUser = updateOne(User);
+exports.deleteUser = deleteOne(User);
+
+exports.myProfile = handleAsync((req, res, next) => {
+  const { user } = req;
   res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users: users,
-    },
+    data: user,
   });
 });
-
-exports.getUser = handleAsync(async (req, res, next) => {
-  const id = { req };
-  const user = await User.findById(id);
-  if (!user) {
-    return next(new AppError(404, `No User found with id: ${id}`));
-  }
-  res.status(200).json({
-    status: 'success',
-    data: {
-      user: user,
-    },
-  });
-});
-
-exports.updateUser = async (req, res, next) => {};
-exports.deleteUser = async (req, res, next) => {};
 
 /*  later email should be updated by asking for the current password
     and getting verified from the new email
