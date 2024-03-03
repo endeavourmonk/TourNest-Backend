@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const Tour = require('./tours');
+
 const reviewSchema = new mongoose.Schema({
   review: {
     type: String,
@@ -48,7 +50,7 @@ const reviewSchema = new mongoose.Schema({
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
-    select: 'name username photo -_id',
+    select: 'name username photo',
   });
   next();
 });
@@ -60,6 +62,61 @@ reviewSchema.pre('findOneAndUpdate', function (next) {
   update.isEdited = true;
   update.updatedAt = Date.now();
   next();
+});
+
+reviewSchema.statics.calcAvgRatings = async function (tourId) {
+  try {
+    const stats = await this.aggregate([
+      {
+        $match: { tour: tourId },
+      },
+      {
+        $group: {
+          _id: '$tour',
+          averageRating: { $avg: '$rating' },
+          totalRatings: { $sum: 1 },
+        },
+      },
+    ]);
+    // console.log(stats);
+    const update = {
+      rating: 0,
+      totalRatings: 0,
+    };
+
+    if (stats.length) {
+      update.rating = stats[0].averageRating;
+      update.totalRatings = stats[0].totalRatings;
+    }
+
+    await Tour.findByIdAndUpdate(tourId, update, {
+      new: true,
+      runValidators: true,
+    });
+  } catch (error) {
+    console.warn('something went wrong');
+  }
+};
+
+reviewSchema.post('save', function () {
+  // this points to the document
+  this.constructor.calcAvgRatings(this.tour);
+});
+
+// this is query model so adding _model field so that later Model static methods can be called.
+reviewSchema.pre(/^findOneAnd/, function (next) {
+  this._model = this.model;
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function (doc, next) {
+  try {
+    const Model = this._model;
+    if (doc) await Model.calcAvgRatings(doc.tour);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 const Review = mongoose.model('Review', reviewSchema);
