@@ -24,10 +24,27 @@ exports.mostPopularBuilder = (req, res, next) => {
 };
 
 exports.getAllTours = getAll(Tour);
-exports.getTour = getOne(Tour);
 exports.createTour = createOne(Tour);
 exports.updateTour = updateOne(Tour);
 exports.deleteTour = deleteOne(Tour);
+
+exports.getTour = handleAsync(async (req, res, next) => {
+  const { id } = req.params;
+  const doc = await Tour.findById(id).populate({
+    path: 'reviews',
+    select: '-__v',
+  });
+
+  if (!doc) {
+    return next(new AppError(404, `No doc found with this ID`));
+  }
+
+  res.status(200).json({
+    status: 'success',
+    message: 'document fetched',
+    data: doc,
+  });
+});
 
 exports.getBySlug = handleAsync(async (req, res, next) => {
   const { slug } = req.params;

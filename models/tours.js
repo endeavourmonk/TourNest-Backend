@@ -53,10 +53,10 @@ const tourSchema = new mongoose.Schema(
         message: 'Discount Price cannot be more than the tour price',
       },
     },
-    ratings: {
+    rating: {
       type: Number,
-      default: 3,
-      min: [1, 'Rating cannot be less than 1'],
+      default: 0,
+      min: [0, 'Rating cannot be less than 0'],
       max: [5, 'Rating cannot be more than 5'],
     },
     totalRatings: {
@@ -107,7 +107,6 @@ tourSchema.virtual('reviews', {
   ref: 'Review',
   localField: '_id',
   foreignField: 'tour',
-  // justOne: true,
 });
 
 // document middleware to create the slug on tour creation
@@ -128,15 +127,14 @@ tourSchema.pre(/^find/, function (next) {
 
 // query middleware to update the slug on the tour update
 tourSchema.pre('findOneAndUpdate', function (next) {
-  try {
-    // Returns the current update operations as a JSON object.
-    const update = this.getUpdate();
+  // Returns the current update operations as a JSON object.
+  const update = this.getUpdate();
+
+  if (update.name) {
     const slug = slugify(update.name, { lower: true });
     update.slug = slug;
-    next();
-  } catch (error) {
-    next(error);
   }
+  next();
 });
 
 // aggregate middleware to filter the non-premium tour by adding a match stage

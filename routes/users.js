@@ -17,6 +17,7 @@ const {
   updateMe,
   deleteMe,
   changeRole,
+  myProfile,
 } = require('../controllers/users');
 
 const router = express.Router();
@@ -27,10 +28,13 @@ router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:resetToken', resetPassword);
 router.patch('/update-password', protect, updatePassword);
 router.patch('/update-me', protect, updateMe);
-router.delete('/delete-user', protect, deleteMe);
-router.patch('/change-role/:id', protect, restrictToRole('admin'), changeRole);
+router.delete('/delete-me', protect, deleteMe);
+router.get('/my-profile', protect, myProfile);
+router.get('/:id', getUser);
+router.get('/', getAllUsers);
 
-router.route('/').get(protect, getAllUsers);
-router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
+router.patch('/:id', protect, restrictToRole('admin'), updateUser);
+router.delete('/:id', protect, restrictToRole('admin'), deleteUser);
+router.patch('/change-role/:id', protect, restrictToRole('admin'), changeRole);
 
 module.exports = router;

@@ -9,6 +9,7 @@ const {
   mostPopularBuilder,
   getTourStats,
   getMonthlyPlan,
+  getBySlug,
 } = require('../controllers/tours');
 
 const reveiwRouter = require('./reviews');
@@ -16,19 +17,22 @@ const reveiwRouter = require('./reviews');
 const router = express.Router();
 
 // nested route "http://localhost:8000/api/v1/tours/222121/reviews"
-router.use('/:tourId/reviews', reveiwRouter);
+router.use('/:id/reviews', reveiwRouter);
 
 router
   .route('/')
   .get(getAllTours)
   .post(protect, restrictToRole('admin'), createTour);
 
-router.route('/most-popular').get(mostPopularBuilder, getAllTours);
-router.route('/tour-stats').get(protect, restrictToRole('admin'), getTourStats);
+router.get('/most-popular', mostPopularBuilder, getAllTours);
+router.get('/tour-stats', protect, restrictToRole('admin'), getTourStats);
 
-router
-  .route('/monthly-plan/:year')
-  .get(protect, restrictToRole('admin'), getMonthlyPlan);
+router.get(
+  '/monthly-plan/:year',
+  protect,
+  restrictToRole('admin'),
+  getMonthlyPlan,
+);
 
 router
   .route('/:id')
@@ -36,6 +40,6 @@ router
   .patch(protect, restrictToRole('admin'), updateTour)
   .delete(protect, restrictToRole('admin'), deleteTour);
 
-// router.route('/:slug').get(getTour);
+// router.get('/:slug', getBySlug);
 
 module.exports = router;

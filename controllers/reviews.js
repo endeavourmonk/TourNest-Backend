@@ -13,7 +13,7 @@ exports.getAllReviews = getAll(Review);
 exports.getReview = getOne(Review);
 
 exports.setTourAndUser = (req, res, next) => {
-  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.tour) req.body.tour = req.params.id;
   if (!req.body.user) req.body.user = req.user.id;
   next();
 };
@@ -22,9 +22,9 @@ exports.validateReviewCreator = handleAsync(async (req, res, next) => {
   const { id } = req.params;
   const review = await Review.findById(id);
 
-  if (!review) next(new AppError(404, `No reveiw found for this id`));
+  if (!review) return next(new AppError(404, `No reveiw found for this id`));
   if (review.user.id !== req.user.id)
-    next(new AppError(400, `This Reveiw is not created by you`));
+    return next(new AppError(400, `This Reveiw is not created by you`));
 
   next();
 });
