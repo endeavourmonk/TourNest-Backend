@@ -9,7 +9,8 @@ const {
   mostPopularBuilder,
   getTourStats,
   getMonthlyPlan,
-  getBySlug,
+  // getBySlug,
+  getToursWithin,
 } = require('../controllers/tours');
 
 const reveiwRouter = require('./reviews');
@@ -33,6 +34,10 @@ router.get(
   restrictToRole('admin'),
   getMonthlyPlan,
 );
+
+router
+  .route('/tours-within/:distance/center/:latlon/unit/:unit')
+  .get(getToursWithin);
 
 router
   .route('/:id')

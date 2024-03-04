@@ -61,6 +61,33 @@ exports.getBySlug = handleAsync(async (req, res, next) => {
   });
 });
 
+exports.getToursWithin = handleAsync(async (req, res, next) => {
+  const { distance, latlon, unit } = req.params;
+  const [latitude, longitude] = latlon.split(',');
+  const radius = unit === 'mi' ? distance / 3963.2 : distance / 6378.1;
+
+  if (!latitude || !longitude)
+    return next(
+      new AppError(
+        400,
+        `Please specify latitude and longitude in 'lat,log' format`,
+      ),
+    );
+
+  const tours = await Tour.find({
+    startLocation: {
+      $geoWithin: { $centerSphere: [[longitude, latitude], radius] },
+    },
+  });
+
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    message: 'document fetched',
+    data: tours,
+  });
+});
+
 exports.getTourStats = handleAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
