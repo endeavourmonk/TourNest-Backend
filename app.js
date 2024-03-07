@@ -26,8 +26,10 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-// Parse incoming requests with JSON payloads.
+// Middlewares to Parse incoming requests with JSON payloads and URL-encoded data.
+
 app.use(express.json({ limit: '10kb' }));
+app.use(express.urlencoded({ extended: true }));
 
 // Data sanitization NOSQL Queries
 app.use(

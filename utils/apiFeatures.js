@@ -15,7 +15,7 @@ module.exports = class APIFeatures {
       'fields',
       'token',
       'apiKey',
-      'user',
+      // 'user',
       'groupBy',
       'aggregate',
     ];

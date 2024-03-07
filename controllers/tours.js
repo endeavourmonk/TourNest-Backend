@@ -4,7 +4,7 @@ const handleAsync = require('../utils/handleAsync');
 
 const {
   getAll,
-  getOne,
+  // getOne,
   updateOne,
   deleteOne,
   createOne,
@@ -85,6 +85,43 @@ exports.getToursWithin = handleAsync(async (req, res, next) => {
     results: tours.length,
     message: 'document fetched',
     data: tours,
+  });
+});
+
+exports.getToursDistance = handleAsync(async (req, res, next) => {
+  const { latlon, unit } = req.params;
+  const [latitude, longitude] = latlon.split(',');
+
+  const multiplier = unit === 'km' ? 0.001 : 0.00062137;
+
+  if (!latitude || !longitude)
+    return next(
+      new AppError(
+        400,
+        `Please specify latitude and longitude in 'lat,log' format`,
+      ),
+    );
+
+  const distances = await Tour.aggregate([
+    {
+      $geoNear: {
+        near: { type: 'Point', coordinates: [longitude * 1, latitude * 1] },
+        distanceField: 'distance',
+        distanceMultiplier: multiplier,
+      },
+    },
+    {
+      $project: { name: 1, distance: 1 },
+    },
+    {
+      $sort: { distance: 1 },
+    },
+  ]);
+
+  res.status(200).json({
+    status: 'success',
+    message: 'document fetched',
+    data: distances,
   });
 });
 

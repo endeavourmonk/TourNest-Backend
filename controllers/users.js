@@ -17,12 +17,12 @@ exports.getUser = getOne(User);
 exports.updateUser = updateOne(User);
 exports.deleteUser = deleteOne(User);
 
-exports.myProfile = handleAsync((req, res, next) => {
+exports.myProfile = (req, res, next) => {
   const { user } = req;
   res.status(200).json({
     data: user,
   });
-});
+};
 
 /*  later email should be updated by asking for the current password
     and getting verified from the new email

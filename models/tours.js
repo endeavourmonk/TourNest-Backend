@@ -143,10 +143,10 @@ tourSchema.pre('findOneAndUpdate', function (next) {
 });
 
 // aggregate middleware to filter the non-premium tour by adding a match stage
-tourSchema.pre('aggregate', function (next) {
-  this._pipeline.unshift({ $match: { premium: false } });
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   this._pipeline.unshift({ $match: { premium: false } });
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', tourSchema);
 module.exports = Tour;
