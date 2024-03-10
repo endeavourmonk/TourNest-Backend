@@ -18,6 +18,9 @@ const {
   deleteMe,
   changeRole,
   myProfile,
+  uploadUserPhoto,
+  resizeUserPhoto,
+  uploadToCloudinary,
 } = require('../controllers/users');
 
 const router = express.Router();
@@ -27,7 +30,14 @@ router.post('/login', login);
 router.post('/forgot-password', forgotPassword);
 router.patch('/reset-password/:resetToken', resetPassword);
 router.patch('/update-password', protect, updatePassword);
-router.patch('/update-me', protect, updateMe);
+router.patch(
+  '/update-me',
+  protect,
+  uploadUserPhoto,
+  resizeUserPhoto,
+  uploadToCloudinary,
+  updateMe,
+);
 router.delete('/delete-me', protect, deleteMe);
 router.get('/my-profile', protect, myProfile);
 router.get('/:id', getUser);

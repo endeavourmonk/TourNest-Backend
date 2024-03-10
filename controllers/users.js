@@ -1,8 +1,67 @@
+const multer = require('multer');
+const sharp = require('sharp');
+const fs = require('fs');
+
 const User = require('../models/users');
 const AppError = require('../utils/appError');
 const handleAsync = require('../utils/handleAsync');
-
+const uploader = require('../utils/cloudinary');
 const { getAll, getOne, updateOne, deleteOne } = require('./handleFactory');
+
+// Multer configuration: Accept single image file in buffer then resizing and saving
+// in disk, then putting the local path in the req, then uploading that file on cloudinary
+// and finally unlinking the file from the local disk.
+const storage = multer.memoryStorage();
+
+const multerFileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError(400, `Uploaded file is not an image.`), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: multerFileFilter,
+});
+
+exports.uploadUserPhoto = upload.single('photo');
+
+exports.resizeUserPhoto = handleAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  const filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+  req.localFilePath = `tmp/${filename}`;
+
+  await sharp(req.file.buffer)
+    .resize(500, 500)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(req.localFilePath);
+
+  next();
+});
+
+exports.uploadToCloudinary = async (req, res, next) => {
+  if (!req.file) if (!req.file) return next();
+
+  // upload file to user-profile folder in cloudinary.
+  const folder = 'user-profile';
+  const { localFilePath } = req;
+  try {
+    const result = await uploader(folder, localFilePath);
+    req.file.publicUrl = result.secure_url;
+
+    // remove the local file after uploading to cloudinary.
+    fs.unlink(localFilePath, (err) => {
+      if (err) throw err;
+      next();
+    });
+  } catch (error) {
+    return next(new AppError(500, `Error Uploading file to cloudinary.`));
+  }
+};
 
 const filterObj = (obj, allowedFields) => {
   const filteredObj = {};
@@ -29,6 +88,7 @@ exports.myProfile = (req, res, next) => {
 */
 exports.updateMe = handleAsync(async (req, res, next) => {
   // Don't let user to update password through this route
+
   if (req.body.password || req.body.passwordConfirm)
     return next(
       new AppError(400, 'Password cannot be updated through this route'),
@@ -37,6 +97,7 @@ exports.updateMe = handleAsync(async (req, res, next) => {
   // Update the user data
   const fieldsToKeep = ['name', 'email', 'photo', 'username'];
   const filteredBody = filterObj(req.body, fieldsToKeep);
+  if (req.file) filteredBody.photo = req.file.publicUrl;
 
   const { id } = req.user;
   const updatedUser = await User.findByIdAndUpdate(id, filteredBody, {
