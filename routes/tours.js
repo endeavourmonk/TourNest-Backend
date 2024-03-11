@@ -1,4 +1,5 @@
 const express = require('express');
+
 const { protect, restrictToRole } = require('../controllers/auth');
 const {
   getAllTours,
@@ -12,6 +13,9 @@ const {
   // getBySlug,
   getToursWithin,
   getToursDistance,
+  uploadtourPhotos,
+  resizeTourPhotos,
+  uploadToCloudinary,
 } = require('../controllers/tours');
 
 const reveiwRouter = require('./reviews');
@@ -45,7 +49,14 @@ router.get('/distances/center/:latlon/unit/:unit', getToursDistance);
 router
   .route('/:id')
   .get(protect, getTour)
-  .patch(protect, restrictToRole('admin'), updateTour)
+  .patch(
+    protect,
+    restrictToRole('admin'),
+    uploadtourPhotos,
+    resizeTourPhotos,
+    uploadToCloudinary,
+    updateTour,
+  )
   .delete(protect, restrictToRole('admin'), deleteTour);
 
 // router.get('/:slug', getBySlug);

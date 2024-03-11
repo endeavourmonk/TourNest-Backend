@@ -1,5 +1,10 @@
+const multer = require('multer');
+const sharp = require('sharp');
+const fs = require('fs');
+
 const Tour = require('../models/tours');
 const AppError = require('../utils/appError');
+const uploader = require('../utils/cloudinary');
 const handleAsync = require('../utils/handleAsync');
 
 const {
@@ -9,6 +14,95 @@ const {
   deleteOne,
   createOne,
 } = require('./handleFactory');
+
+// Multer configuration: Accept images in buffer then resize and save in disk, then
+// putting the local path in the req, then uploading that file on cloudinary and
+// finally unlinking the file from the local disk.
+const storage = multer.memoryStorage();
+
+const multerFileFilter = (req, file, cb) => {
+  if (file.mimetype.startsWith('image')) {
+    cb(null, true);
+  } else {
+    cb(new AppError(400, `Uploaded file is not an image.`), false);
+  }
+};
+
+const upload = multer({
+  storage: storage,
+  fileFilter: multerFileFilter,
+});
+
+exports.uploadtourPhotos = upload.fields([
+  { name: 'imageCover', maxCount: 1 },
+  { name: 'images', maxCount: 3 },
+]);
+
+exports.resizeTourPhotos = handleAsync(async (req, res, next) => {
+  if (!req.files || !req.files.imageCover || !req.files.images) return next();
+
+  // processing imageCover
+  let filename = `tour-coverImage-${req.params.id}-${Date.now()}.jpeg`;
+  req.files.imageCoverLocalPath = `tmp/${filename}`;
+
+  await sharp(req.files.imageCover[0].buffer)
+    .resize(2500, 1000)
+    .toFormat('jpeg')
+    .jpeg({ quality: 90 })
+    .toFile(req.files.imageCoverLocalPath);
+
+  // process tours image
+  req.files.imagesLocalPath = [];
+  const promises = req.files.images.map(async (file, idx) => {
+    filename = `tour-${req.params.id}-${Date.now()}-${idx}.jpeg`;
+    req.files.imagesLocalPath.push(`tmp/${filename}`);
+
+    await sharp(file.buffer)
+      .resize(2500, 1000)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(req.files.imagesLocalPath[idx]);
+  });
+
+  await Promise.all(promises);
+  next();
+});
+
+exports.uploadToCloudinary = async (req, res, next) => {
+  if (!req.files || !req.files.imageCover || !req.files.images) return next();
+
+  // upload file to tours folder in cloudinary.
+  const folder = 'tours';
+  const { imageCoverLocalPath, imagesLocalPath } = req.files;
+  const imageFilesLocalPath = [imageCoverLocalPath, ...imagesLocalPath];
+
+  try {
+    const results = await Promise.all(
+      imageFilesLocalPath.map((file) => uploader(folder, file)),
+    );
+
+    // add public url's in the req.files
+    req.body.imageCover = results[0].secure_url;
+    req.body.images = results.slice(1).map((result) => result.secure_url);
+
+    // remove the local files after uploading to cloudinary.
+    await Promise.all(
+      imageFilesLocalPath.map(
+        (file) =>
+          new Promise((resolve, reject) => {
+            fs.unlink(file, (err) => {
+              if (err) reject(err);
+              else resolve('file deleted successfully');
+            });
+          }),
+      ),
+    );
+
+    next();
+  } catch (error) {
+    return next(error);
+  }
+};
 
 // Middleware
 exports.mostPopularBuilder = (req, res, next) => {
