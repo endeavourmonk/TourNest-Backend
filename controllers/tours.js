@@ -222,7 +222,7 @@ exports.getToursDistance = handleAsync(async (req, res, next) => {
 exports.getTourStats = handleAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
-      $match: { ratings: { $gte: 1 } },
+      $match: { rating: { $gte: 1 } },
     },
     {
       $group: {

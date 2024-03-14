@@ -49,7 +49,7 @@ const reviewSchema = new mongoose.Schema({
 // created unique index to prevent a user to create multiple reviews on a tour.
 reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
-// Query middleware to add the data in tour and user field on find operation
+// Query middleware to add the data in user field on find operation
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
@@ -81,7 +81,7 @@ reviewSchema.statics.calcAvgRatings = async function (tourId) {
         },
       },
     ]);
-    // console.log(stats);
+
     const update = {
       rating: 0,
       totalRatings: 0,
