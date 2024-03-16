@@ -45,6 +45,6 @@ module.exports = class Email {
   }
 
   async sendWelcome() {
-    await this.sendMail(`Welcome ${this.name}!`, `Welcome to the TourNest!`);
+    await this.sendMail(`Welcome ${this.name}`, `Welcome to the TourNest!`);
   }
 };
