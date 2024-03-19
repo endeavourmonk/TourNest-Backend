@@ -47,7 +47,7 @@ exports.uploadToCloudinary = async (req, res, next) => {
   if (!req.file) if (!req.file) return next();
 
   // upload file to user-profile folder in cloudinary.
-  const folder = 'user-profile';
+  const folder = 'tournest/users';
   const { localFilePath } = req;
   try {
     const result = await uploader(folder, localFilePath);

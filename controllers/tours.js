@@ -72,7 +72,7 @@ exports.uploadToCloudinary = async (req, res, next) => {
   if (!req.files || !req.files.imageCover || !req.files.images) return next();
 
   // upload file to tours folder in cloudinary.
-  const folder = 'tours';
+  const folder = 'tournest/tours';
   const { imageCoverLocalPath, imagesLocalPath } = req.files;
   const imageFilesLocalPath = [imageCoverLocalPath, ...imagesLocalPath];
 
@@ -130,7 +130,7 @@ exports.getTour = handleAsync(async (req, res, next) => {
   });
 
   if (!doc) {
-    return next(new AppError(404, `No doc found with this ID`));
+    return next(new AppError(404, `No tour found with this ID`));
   }
 
   res.status(200).json({
