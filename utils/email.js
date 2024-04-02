@@ -9,17 +9,18 @@ module.exports = class Email {
   }
 
   createTransport_() {
-    if (process.env.NODE_ENV === 'production') {
-      return nodemailer.createTransport({
-        service: 'Outlook',
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        auth: {
-          user: process.env.RESEND_USER,
-          pass: process.env.RESEND_API_KEY,
-        },
-      });
-    }
+    // if (process.env.NODE_ENV === 'production') {
+    //   return nodemailer.createTransport({
+    //     service: 'Outlook',
+    //     host: process.env.EMAIL_HOST,
+    //     port: process.env.EMAIL_PORT,
+    //     auth: {
+    //       user: process.env.RESEND_USER,
+    //       pass: process.env.RESEND_API_KEY,
+    //     },
+    //   });
+    // }
+
     return nodemailer.createTransport({
       service: 'Outlook',
       // host: 'smtp.forwardemail.net',
@@ -45,6 +46,6 @@ module.exports = class Email {
   }
 
   async sendWelcome() {
-    await this.sendMail(`Welcome ${this.name}!`, `Welcome to the TourNest!`);
+    await this.sendMail(`Welcome ${this.name}`, `Welcome to the TourNest!`);
   }
 };
