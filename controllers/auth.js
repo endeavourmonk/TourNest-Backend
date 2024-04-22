@@ -31,6 +31,7 @@ const createAndSendToken = (user, statusCode, res) => {
   });
 };
 
+// TODO: send verify email before creating accound
 exports.signUp = handleAsync(async (req, res, next) => {
   // Don't put extra fields for security reasons
   const newUser = await User.create({
