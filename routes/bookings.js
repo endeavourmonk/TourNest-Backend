@@ -1,6 +1,6 @@
 const express = require('express');
 
-const { protect, restrictToRole } = require('../controllers/auth');
+const { protect } = require('../controllers/auth');
 const { getCheckoutSession } = require('../controllers/bookings');
 
 const router = express.Router();

@@ -8,6 +8,7 @@ const tourRouter = require('./routes/tours');
 const userRouter = require('./routes/users');
 const reviewRouter = require('./routes/reviews');
 const bookingRouter = require('./routes/bookings');
+const baseRouter = require('./routes/base');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/error');
@@ -19,6 +20,10 @@ app.use(helmet());
 
 // Apply the rate limiting middleware to all requests.
 const limiter = rateLimit({
+  validate: {
+    validationsConfig: false,
+    default: true,
+  },
   windowMs: process.env.RATE_LIMIT_WINDOW * 60 * 1000,
   limit: process.env.RATE_LIMIT,
   message: 'Rate limit exceeded. Please try again later.',
@@ -56,6 +61,7 @@ app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
 app.use('/api/v1/bookings', bookingRouter);
+app.use('/', baseRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(404, `${req.originalUrl} not found`));
