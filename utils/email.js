@@ -39,8 +39,8 @@ module.exports = class Email {
     };
 
     // create a transport and send mail.
-    console.log('sent mail');
     await this.createTransport_().sendMail(mailOptions);
+    console.log('sent mail');
   }
 
   async sendWelcome() {

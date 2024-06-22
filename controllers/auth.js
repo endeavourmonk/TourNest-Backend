@@ -53,6 +53,7 @@ exports.signUp = handleAsync(async (req, res, next) => {
     );
 
     // Send Welcome email
+    console.log('user created');
     const _email = new Email(newUser[0]);
     await _email.sendWelcome();
 
