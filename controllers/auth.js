@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/users');
@@ -33,20 +34,40 @@ const createAndSendToken = (user, statusCode, res) => {
 
 // TODO: send verify email before creating accound
 exports.signUp = handleAsync(async (req, res, next) => {
-  // Don't put extra fields for security reasons
-  const newUser = await User.create({
-    name: req.body.name,
-    email: req.body.email,
-    username: req.body.username,
-    password: req.body.password,
-    passwordConfirm: req.body.passwordConfirm,
-  });
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-  // Send Welcome email
-  const email = new Email(newUser);
-  await email.sendWelcome();
+  try {
+    // Don't put extra fields for security reasons
+    const newUser = await User.create(
+      [
+        {
+          name: req.body.name,
+          email: req.body.email,
+          username: req.body.username,
+          password: req.body.password,
+          passwordConfirm: req.body.passwordConfirm,
+        },
+      ],
+      { session },
+    );
 
-  createAndSendToken(newUser, 201, res);
+    // Send Welcome email
+    const _email = new Email(newUser[0]);
+    await _email.sendWelcome();
+
+    // If everything is successful, commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    createAndSendToken(newUser, 201, res);
+  } catch (error) {
+    // If any error occurs, abort the transaction
+    await session.abortTransaction();
+    session.endSession();
+
+    return next(new AppError(500, `Error signing up. ${error}`));
+  }
 });
 
 exports.login = handleAsync(async (req, res, next) => {
@@ -118,22 +139,18 @@ exports.forgotPassword = async (req, res, next) => {
   const user = await User.findOne({ email });
   if (!user) return next(new AppError(404, 'No user exists with this email'));
 
-  // Generate password reset token and save in db
-  const passwordResetToken = user.createPasswordResetToken();
-  await user.save({ validateBeforeSave: false });
-
-  // Send token to user's email
   try {
+    // Generate password reset token and save in db
+    const passwordResetToken = user.createPasswordResetToken();
+    await user.save({ validateBeforeSave: false });
+
+    // Send token to user's email, User will submit a PATCH request to resetURL with new password and passwordConfirm.
     const resetURL = `${req.protocol}://${req.get(
       'host',
     )}/api/v1/users/reset-password/${passwordResetToken}`;
-    const message = `Forgot your password?\nSubmit a patch request to ${resetURL} with new password and password Confirm.\nIf you didn't forgot password, Please Ignore this email!`;
-
-    // await sendEmail({
-    //   email: user.email,
-    //   subject: 'Password Reset Token. Valid for 10 mins',
-    //   message,
-    // });
+    // console.log(user);
+    const _email = new Email(user, resetURL);
+    await _email.sendPasswordReset();
 
     res.status(200).json({
       status: 'success',

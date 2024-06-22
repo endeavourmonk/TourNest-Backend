@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Template</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+      .header {
+        text-align: center;
+        padding: 20px 0;
+        background-color: #d8efd3;
+        color: #333333;
+        border-radius: 10px 10px 0 0;
+        position: relative;
+      }
+      .header img {
+        max-width: 120px;
+        margin-bottom: 10px;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 28px;
+        font-weight: 700;
+      }
+      .content {
+        padding: 30px;
+      }
+      .content h2 {
+        color: #333333;
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      .content p {
+        color: #666666;
+        line-height: 1.8;
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+      .cta-button {
+        display: inline-block;
+        width: auto;
+        padding: 15px 30px;
+        text-align: center;
+        background-color: #d8efd3;
+        color: #333333 !important;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 18px;
+        transition: background-color 0.3s ease;
+      }
+      .cta-button:hover {
+        background-color: #cbf0c4;
+      }
+      .footer {
+        text-align: center;
+        padding: 20px;
+        color: #999999;
+        font-size: 14px;
+        border-top: 1px solid #eeeeee;
+        margin-top: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <img
+          src="https://res.cloudinary.com/cloudimagestore-/image/upload/v1719056056/tournest/assets/tournest_logo_gaogpa.png"
+          alt="Logo"
+        />
+        <h1>{{ headerTitle }}</h1>
+      </div>
+      <div class="content">
+        <h2>Dear {{ userName }},</h2>
+        <p>{{ mainMessage }}</p>
+        <a href="{{ ctaLink }}" class="cta-button">{{ ctaText }}</a>
+      </div>
+      <div class="footer">
+        <p>&copy; 2024 TourNest. All rights reserved.</p>
+        <p>1234 Service Road, Tech City, TC 56789</p>
+      </div>
+    </div>
+  </body>
+</html>
