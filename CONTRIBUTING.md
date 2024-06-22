@@ -81,7 +81,7 @@ We use GitHub to host code, to track issues and feature requests, as well as acc
 ## First-time contributors
 
 We've tagged some issues to make it easy to get started 😄
-[Good first issues](https://github.com/endeavourmonk/TourNest-Frontend/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+[Good first issues](https://github.com/endeavourmonk/TourNest/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 If you're interested in working on an issue, make sure it has either a `good-first-issue` or `up-for-grabs` label added. Add a comment on the issue and wait for the issue to be assigned before you start working on it. This helps to avoid multiple people working on similar issues.
 
@@ -99,9 +99,9 @@ Pull requests are the best way to propose changes to the codebase (we use [Git-F
 
 In short, when you submit code changes, your submissions are understood to be under the same [MIT License](https://opensource.org/license/mit) that covers the project.
 
-## Report bugs using GitHub's [issues](https://github.com/endeavourmonk/TourNest-Frontend/issues)
+## Report bugs using GitHub's [issues](https://github.com/endeavourmonk/TourNest/issues)
 
-We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/endeavourmonk/TourNest-Frontend/issues/new/choose). It's that easy!
+We use GitHub issues to track public bugs. Report a bug by [opening a new issue](https://github.com/endeavourmonk/TourNest/issues/new/choose). It's that easy!
 
 **Great Bug Reports** tend to have:
 
