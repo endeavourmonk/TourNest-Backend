@@ -139,7 +139,6 @@ exports.forgotPassword = async (req, res, next) => {
   // Check if user exists with this email
   const user = await User.findOne({ email });
   if (!user) return next(new AppError(404, 'No user exists with this email'));
-
   try {
     // Generate password reset token and save in db
     const passwordResetToken = user.createPasswordResetToken();
@@ -161,6 +160,7 @@ exports.forgotPassword = async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
     await user.save({ validateBeforeSave: false });
+    console.log('err----', error);
     return next(
       new AppError(500, 'Some error occured. Please try again later!'),
     );
