@@ -22,6 +22,9 @@ module.exports = class Email {
   createTransport_() {
     return nodemailer.createTransport({
       service: 'Outlook',
+      tls: {
+        ciphers: 'SSLv3',
+      },
       auth: {
         user: email,
         pass: password,
