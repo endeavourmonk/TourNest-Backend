@@ -53,9 +53,8 @@ exports.signUp = handleAsync(async (req, res, next) => {
     );
 
     // Send Welcome email
-    console.log('user created');
-    const _email = new Email(newUser[0]);
-    await _email.sendWelcome();
+    // const _email = new Email(newUser[0]);
+    // await _email.sendWelcome();
 
     // If everything is successful, commit the transaction
     await session.commitTransaction();
@@ -145,12 +144,12 @@ exports.forgotPassword = async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
 
     // Send token to user's email, User will submit a PATCH request to resetURL with new password and passwordConfirm.
-    const resetURL = `${req.protocol}://${req.get(
-      'host',
-    )}/api/v1/users/reset-password/${passwordResetToken}`;
-    // console.log(user);
-    const _email = new Email(user, resetURL);
-    await _email.sendPasswordReset();
+    // const resetURL = `${req.protocol}://${req.get(
+    //   'host',
+    // )}/api/v1/users/reset-password/${passwordResetToken}`;
+
+    // const _email = new Email(user, resetURL);
+    // await _email.sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
@@ -160,7 +159,6 @@ exports.forgotPassword = async (req, res, next) => {
     user.passwordResetToken = undefined;
     user.passwordResetTokenExpires = undefined;
     await user.save({ validateBeforeSave: false });
-    console.log('err----', error);
     return next(
       new AppError(500, 'Some error occured. Please try again later!'),
     );

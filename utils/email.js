@@ -22,7 +22,7 @@ module.exports = class Email {
 
   createTransport_() {
     const transporter = nodemailer.createTransport({
-      host: 'smtp-mail.outlook.com',
+      host: 'smtp.mailgun.org',
       secureConnection: false,
       port: 587,
       auth: {
