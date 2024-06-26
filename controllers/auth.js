@@ -53,8 +53,8 @@ exports.signUp = handleAsync(async (req, res, next) => {
     );
 
     // Send Welcome email
-    // const _email = new Email(newUser[0]);
-    // await _email.sendWelcome();
+    const _email = new Email(newUser[0]);
+    await _email.sendWelcome();
 
     // If everything is successful, commit the transaction
     await session.commitTransaction();
