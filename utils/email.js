@@ -58,6 +58,7 @@ module.exports = class Email {
     const success = await new Promise((resolve, reject) => {
       transporter.sendMail(mailOptions).then((info, err) => {
         if (info.response.includes('250')) resolve(true);
+        console.log('send failed--', err);
         reject(err);
       });
     });
