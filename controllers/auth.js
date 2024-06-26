@@ -143,13 +143,14 @@ exports.forgotPassword = async (req, res, next) => {
     const passwordResetToken = user.createPasswordResetToken();
     await user.save({ validateBeforeSave: false });
 
-    // Send token to user's email, User will submit a PATCH request to resetURL with new password and passwordConfirm.
-    // const resetURL = `${req.protocol}://${req.get(
-    //   'host',
-    // )}/api/v1/users/reset-password/${passwordResetToken}`;
+    // Send token to user's email, User will submit a PATCH request to resetURL
+    // with new password and passwordConfirm.
+    const resetURL = `${req.protocol}://${req.get(
+      'host',
+    )}/api/v1/users/reset-password/${passwordResetToken}`;
 
-    // const _email = new Email(user, resetURL);
-    // await _email.sendPasswordReset();
+    const _email = new Email(user, resetURL);
+    await _email.sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
