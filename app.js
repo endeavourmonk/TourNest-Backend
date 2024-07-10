@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
+const cors = require('cors');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
 
@@ -15,6 +16,7 @@ const globalErrorHandler = require('./controllers/error');
 
 const app = express();
 
+app.use(cors());
 // securing req headers
 app.use(helmet());
 
