@@ -6,8 +6,9 @@ exports.getAll = (Model) =>
   handleAsync(async (req, res, next) => {
     const filter = req.params.id ? { tour: req.params.id } : {};
 
-    // Create features object which takes mongoose query & query string and then append
-    // functions which return the object with appended query then execute final obj.query.
+    // Create features object which takes mongoose query & query string and then
+    // append functions which return the object with appended query then execute
+    // final obj.query.
     const features = new APIFeatures(Model.find(filter), req.query)
       .filter()
       .sort()
